@@ -135,7 +135,7 @@ angular.module('ui.bootstrap.dropdown', ['ui.bootstrap.multiMap', 'ui.bootstrap.
   };
 }])
 
-.controller('UibDropdownController', ['$scope', '$element', '$attrs', '$parse', 'uibDropdownConfig', 'uibDropdownService', '$animate', '$uibPosition', '$document', '$compile', '$templateRequest', function($scope, $element, $attrs, $parse, dropdownConfig, uibDropdownService, $animate, $position, $document, $compile, $templateRequest) {
+.controller('UibDropdownController', ['$scope', '$element', '$attrs', '$parse', 'uibDropdownConfig', 'uibDropdownService', '$animate', '$uibPosition', '$document', '$compile', '$templateRequest', '$timeout', function($scope, $element, $attrs, $parse, dropdownConfig, uibDropdownService, $animate, $position, $document, $compile, $templateRequest, $timeout) {
   var self = this,
     scope = $scope.$new(), // create a child scope so we are not polluting original one
     templateScope,
@@ -271,15 +271,28 @@ angular.module('ui.bootstrap.dropdown', ['ui.bootstrap.multiMap', 'ui.bootstrap.
     if (appendTo && self.dropdownMenu) {
       var pos = $position.positionElements($element, self.dropdownMenu, 'bottom-left', true),
         css,
+        alwaysCss,
         rightalign,
         scrollbarPadding,
         scrollbarWidth = 0;
 
       css = {
-        top: pos.top + 'px',
-        display: isOpen ? 'block' : 'none'
+        top: pos.top + 'px'
       };
 
+      if(isOpen){
+        alwaysCss = {
+          "pointer-events": 'auto',
+          display: 'block'
+        };
+      }else{
+        alwaysCss = {
+          "pointer-events": 'none'
+        };
+        css.display = 'none';
+      }
+      self.dropdownMenu.css(alwaysCss);
+      
       rightalign = self.dropdownMenu.hasClass('dropdown-menu-right');
       if (!rightalign) {
         css.left = pos.left + 'px';
@@ -310,8 +323,13 @@ angular.module('ui.bootstrap.dropdown', ['ui.bootstrap.multiMap', 'ui.bootstrap.
             (pos.left - appendOffset.left + $element.prop('offsetWidth')) + 'px';
         }
       }
-
-      self.dropdownMenu.css(css);
+      if(isOpen){
+        self.dropdownMenu.css(css);
+      }else{
+        setTimeout(function(){
+          self.dropdownMenu.css(css);
+        }, 400);
+      }
     }
 
     var openContainer = appendTo ? appendTo : $element;
@@ -326,10 +344,12 @@ angular.module('ui.bootstrap.dropdown', ['ui.bootstrap.multiMap', 'ui.bootstrap.
       } else {
         toggleClass = isOpen ? 'addClass' : 'removeClass';
       }
-      $animate[toggleClass](openContainer, dropdownOpenClass).then(function() {
-        if (angular.isDefined(isOpen) && isOpen !== wasOpen) {
-          toggleInvoker($scope, { open: !!isOpen });
-        }
+      $timeout(function(){
+        $animate[toggleClass](openContainer, dropdownOpenClass).then(function() {
+          if (angular.isDefined(isOpen) && isOpen !== wasOpen) {
+            toggleInvoker($scope, { open: !!isOpen });
+          }
+        });
       });
     }
 

@@ -298,7 +298,7 @@ angular.module('ui.bootstrap.tooltip', ['ui.bootstrap.position', 'ui.bootstrap.s
                   // The fade transition in TWBS is 150ms.
                   if (ttScope.animation) {
                     if (!transitionTimeout) {
-                      transitionTimeout = $timeout(removeTooltip, 150, false);
+                      transitionTimeout = $timeout(removeTooltip, 500, false);
                     }
                   } else {
                     removeTooltip();

@@ -135,7 +135,7 @@ angular.module('ui.bootstrap.dropdown', ['ui.bootstrap.multiMap', 'ui.bootstrap.
   };
 }])
 
-.controller('UibDropdownController', ['$scope', '$element', '$attrs', '$parse', 'uibDropdownConfig', 'uibDropdownService', '$animate', '$uibPosition', '$document', '$compile', '$templateRequest', function($scope, $element, $attrs, $parse, dropdownConfig, uibDropdownService, $animate, $position, $document, $compile, $templateRequest) {
+.controller('UibDropdownController', ['$scope', '$element', '$attrs', '$parse', 'uibDropdownConfig', 'uibDropdownService', '$animate', '$uibPosition', '$document', '$compile', '$templateRequest', '$timeout', function($scope, $element, $attrs, $parse, dropdownConfig, uibDropdownService, $animate, $position, $document, $compile, $templateRequest, $timeout) {
   var self = this,
     scope = $scope.$new(), // create a child scope so we are not polluting original one
     templateScope,
@@ -233,7 +233,9 @@ angular.module('ui.bootstrap.dropdown', ['ui.bootstrap.multiMap', 'ui.bootstrap.
   };
 
   function removeDropdownMenu() {
-    $element.append(self.dropdownMenu);
+    $timeout(function(){
+      $element.append(self.dropdownMenu);
+    }, 200);
   }
 
   scope.$watch('isOpen', function(isOpen, wasOpen) {
@@ -311,7 +313,13 @@ angular.module('ui.bootstrap.dropdown', ['ui.bootstrap.multiMap', 'ui.bootstrap.
         }
       }
 
-      self.dropdownMenu.css(css);
+      if(!isOpen){
+        $timeout(function(){
+          self.dropdownMenu.css(css);
+        }, 200);
+      }else{
+        self.dropdownMenu.css(css);
+      }
     }
 
     var openContainer = appendTo ? appendTo : $element;

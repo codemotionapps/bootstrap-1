@@ -61,7 +61,7 @@ module.exports = function(grunt) {
           footer: '<%= meta.cssInclude %>'
         },
         src: [], //src filled in by build task
-        dest: '<%= dist %>/<%= filename %>-tpls-<%= pkg.version %>.js'
+        dest: '<%= dist %>/<%= filename %>-tpls.js'
       }
     },
     copy: {
